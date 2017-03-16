@@ -32,12 +32,12 @@ void check_s(const string &value)
 {
 	vector<unsigned char> vec, exits(256, 0);
 	if (value.size() != 512) {
-		fatal("value of S should be of size 512");
+		fatal("value of S should be of size 512\n");
 	}
 	for (size_t i = 0; i < value.size(); i += 2){
 		unsigned char val = hex_to_dec(value.substr(i, 2));
 		if (exits[val]) {
-			fatal("%d occur too many times", val);
+			fatal("%02x occur too many times\n", val);
 		}
 		vec.push_back(val);
 		exits[val] = 1;
@@ -70,14 +70,14 @@ void check_tables(const string &file)
 {
 	ifstream in(file.c_str());
 	if (!in.is_open()) {
-		fatal("%s can't be open!", file.c_str());
+		fatal("%s can't be open!\n", file.c_str());
 	}
 	string line;
 	int col = 0;
 	while (in >> line) {
 		size_t equl_pos = line.find('=');
 		if (equl_pos == string::npos) {
-			fatal("line #%d: should be of format key=value", col);
+			fatal("line #%d: should be of format key=value\n", col);
 		}
 		string opt = line.substr(0, equl_pos);
 		if (opt == "S") {
@@ -87,13 +87,13 @@ void check_tables(const string &file)
 		} else if (opt == "INVP") {
 			check_invp(line.substr(equl_pos+1, -1));
 		} else {
-			fatal("line #%d: the key should be one of (S, P, INVP)", col);
+			fatal("line #%d: the key should be one of (S, P, INVP)\n", col);
 		}
 		col += 1;
 	}
 	vector<unsigned char> res;
 	if (tables::p().size() != 4 || tables::invp().size() != 4) {
-		fatal("P and INVP should be of length 8");
+		fatal("P and INVP should be of length 8\n");
 	}
 	modular_product(tables::p(), tables::invp(), res);
 	unsigned char expected[] = {0, 0, 0, 1};

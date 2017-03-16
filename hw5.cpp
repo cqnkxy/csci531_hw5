@@ -2,8 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "utility.h"
 #include "tablecheck.h"
 #include "crypt.h"
+#include "modprod.h"
 
 using namespace std;
 
@@ -31,6 +33,28 @@ void parse_tablecheck(int argc, char *argv[])
 		malformed_command();
 	}
 	check_tables(argv[2]+3);
+}
+
+void parse_modprod(int argc, char *argv[])
+{
+	if (argc != 4) {
+		malformed_command();
+	}
+	string poly1, poly2;
+	for (int i = 2; i <= 3; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 4) == "-p1=") {
+			poly1 = opt.substr(4, -1);
+		} else if (opt.substr(0, 4) == "-p2=") {
+			poly2 = opt.substr(4, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	if (poly1.size() != 8 || poly2.size() != 8) {
+		fatal("poly1 and poly2 should both be of length 8\n.");
+	}
+	cout << modprod(poly1, poly2) << endl;
 }
 
 void parse_encrypt(int argc, char *argv[])
@@ -68,6 +92,8 @@ void parse_cmd_run(int argc, char *argv[])
 		malformed_command();
 	} else if (strcmp(argv[1], "tablecheck") == 0) {
 		parse_tablecheck(argc, argv);
+	} else if (strcmp(argv[1], "modprod") == 0){
+		parse_modprod(argc, argv);
 	} else {
 		malformed_command();
 	}

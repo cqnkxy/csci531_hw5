@@ -1,17 +1,15 @@
-hw5: hw5.o tablecheck.o crypt.o utility.o
-	g++ -g -W hw5.o tablecheck.o crypt.o utility.o -o hw5
+OBJS = hw5.o tablecheck.o crypt.o utility.o modprod.o
+FLAGS = -g -W
+CXX = g++
 
-tablecheck.o: tablecheck.h tablecheck.cpp
-	g++ -g -W -c tablecheck.cpp
+hw5: $(OBJS)
+	$(CXX) $(FLAGS) $(OBJS) -o hw5
 
-crypt.o: crypt.h crypt.cpp
-	g++ -g -W -c crypt.cpp
-
-utility.o: utility.h utility.cpp
-	g++ -g -W -c utility.cpp
-
+tablecheck.o: tablecheck.h
+crypt.o: crypt.h
+utility.o: utility.h
+modprod.o: modprod.h
 hw5.o: hw5.cpp
-	g++ -g -W -c hw5.cpp
 
 clean:
 	rm -f *.o *.gch hw5
