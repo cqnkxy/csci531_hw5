@@ -1,0 +1,95 @@
+#include <vector>
+#include <cassert>
+#include "crypt.h"
+#include "keyexpand.h"
+#include "config.h"
+#include "tablecheck.h"
+#include "utility.h"
+
+using namespace std;
+
+static const int Nk = aes_128_config::Nk;
+static const int Nr = aes_128_config::Nr;
+static const int Nb = aes_128_config::Nb;
+
+// Add roundKey to state. Modify state in-place.
+void addRoundKey(vector<vector<unsigned char> > &state, int roundKeyIdx)
+{
+	for (int c = 0; c < Nb; ++c) {
+		const vector<unsigned char> &key = roundKeys::keys()[roundKeyIdx+c];
+		for (int r = 0; r < 4; ++r) {
+			state[r][c] ^= key[r];
+		}
+	}
+}
+
+void subBytes(vector<vector<unsigned char> > &state)
+{
+	const vector<unsigned char> &sbox = tables::s();
+	for (int r = 0; r < 4; ++r) {
+		for (int c = 0; c < Nb; ++c) {
+			int row = state[r][c] >> 4, col = state[r][c] & 0x0f;
+			assert((unsigned char)((row << 4) | col) == state[r][c]);
+			state[r][c] = sbox[row*16+col];
+		}
+	}
+}
+
+// only circularly shift the last 3 rows
+void shiftRows(vector<vector<unsigned char> > &state)
+{
+	for (int i = 1; i <=3; ++i) {
+		left_circular_shift(state[i], i);
+	}
+}
+
+void mixColumns(vector<vector<unsigned char> > &state)
+{
+	vector<vector<unsigned char> > _s = state;
+	for (int c = 0; c < Nb; ++c) {
+		state[0][c] = big_dot(0x2, _s[0][c]) ^ big_dot(0x3, _s[1][c]) ^ _s[2][c] ^ _s[3][c];
+		state[1][c] = _s[0][c] ^ big_dot(0x2, _s[1][c]) ^ big_dot(0x3, _s[2][c]) ^ _s[3][c];
+		state[2][c] = _s[0][c] ^ _s[1][c] ^ big_dot(0x2, _s[2][c]) ^ big_dot(0x3, _s[3][c]);
+		state[3][c] = big_dot(0x3, _s[0][c]) ^ _s[1][c] ^ _s[2][c] ^ big_dot(0x2, _s[3][c]);
+	}
+}
+
+void encrypt(
+	const string &key,
+	const string &tablefile,
+	istream &in
+){
+	vector<vector<unsigned char> > state(4, vector<unsigned char>(4, 0));
+	int i;
+	unsigned char byte;
+	// state is packed column wise.
+	for (i = 0; i < 16 && in >> noskipws >> byte; ++i) {
+		state[i%4][i/4] = byte;
+	}
+	if (i < 16) {
+		fatal("The size of the input file is less than 16 bytes\n");
+	}
+	keyexpand(key, tablefile, false);
+	vector<vector<unsigned char> >::iterator k_itr = begin(roundKeys::keys());
+	printf("round[%2d].input    %s\n", 0, vecs_to_str(state).c_str());
+	printf("round[%2d].k_sch    %s\n", 0, vecs_to_str(k_itr, k_itr+4).c_str());
+	addRoundKey(state, 0);
+	for (int round = 1; round < Nr; ++round) {
+		advance(k_itr, 4);
+		printf("round[%2d].start    %s\n", round, vecs_to_str(state).c_str());
+		subBytes(state);
+		printf("round[%2d].s_box    %s\n", round, vecs_to_str(state).c_str());
+		shiftRows(state);
+		printf("round[%2d].s_row    %s\n", round, vecs_to_str(state).c_str());
+		mixColumns(state);
+		printf("round[%2d].m_col    %s\n", round, vecs_to_str(state).c_str());
+		addRoundKey(state, round*Nb);
+		printf("round[%2d].k_sch    %s\n", round, vecs_to_str(k_itr, k_itr+4).c_str());
+	}
+	subBytes(state);
+	printf("round[%2d].s_box    %s\n", Nr, vecs_to_str(state).c_str());
+	shiftRows(state);
+	printf("round[%2d].s_box    %s\n", Nr, vecs_to_str(state).c_str());
+	addRoundKey(state, Nr*Nb);
+	printf("round[%2d].output   %s\n", Nr, vecs_to_str(state).c_str());
+}

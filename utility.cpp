@@ -2,10 +2,14 @@
 #include <string>
 #include <cassert>
 #include <vector>
+#include "config.h"
 
 using namespace std;
 
 const bool DEBUG = true;
+static const int Nk = aes_128_config::Nk;
+static const int Nr = aes_128_config::Nr;
+static const int Nb = aes_128_config::Nb;
 
 void fatal(const char *fmt, ...)
 {
@@ -99,4 +103,39 @@ string vec_to_str(const vector<unsigned char> &vec)
 		res += buf;
 	}
 	return res;
+}
+
+string vecs_to_str(const vector<vector<unsigned char> >&vecs)
+{
+	string res;
+	char buf[3];
+	for (int c = 0; c < Nb; ++c) {
+		for (int r = 0; r < 4; ++r) {
+			sprintf(buf, "%02x", vecs[r][c]);
+			res += buf;
+		}
+	}
+	return res;
+}
+
+string vecs_to_str(
+	const vector<vector<unsigned char> >::iterator &start,
+	const vector<vector<unsigned char> >::iterator &end
+){
+	string res;
+	for (vector<vector<unsigned char> >::iterator itr = start;
+			itr < end;
+			++itr) {
+		res += vec_to_str(*itr);
+	}
+	return res;
+}
+
+void left_circular_shift(vector<unsigned char> &vec, int pos)
+{
+	pos %= vec.size();
+	for (int i = 0; i < pos; ++i) {
+		vec.push_back(vec[i]);
+	}
+	vec.erase(vec.begin(), vec.begin()+pos);
 }

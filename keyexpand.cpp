@@ -4,16 +4,19 @@
 #include "keyexpand.h"
 #include "tablecheck.h"
 #include "utility.h"
+#include "config.h"
 
 using namespace std;
 
-static const int Nk = 4, Nr = 10, Nb = 4; //AES-128
+static const int Nk = aes_128_config::Nk;
+static const int Nr = aes_128_config::Nr;
+static const int Nb = aes_128_config::Nb;
 
-vector<vector<unsigned char> >roundKeys::keys;
+vector<vector<unsigned char> >roundKeys::Keys;
 void roundKeys::set_keys(const vector<vector<unsigned char> > &vecs) {
-	keys = vecs;
+	Keys = vecs;
 }
-const vector<vector<unsigned char> > &roundKeys::Keys() { return keys; }
+vector<vector<unsigned char> > &roundKeys::keys() { return Keys; }
 
 inline void subWord(vector<unsigned char> &word)
 {

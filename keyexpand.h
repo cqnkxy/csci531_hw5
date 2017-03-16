@@ -7,10 +7,10 @@
 class roundKeys
 {
 public:
-	static const std::vector<std::vector<unsigned char> > &Keys();
+	static std::vector<std::vector<unsigned char> > &keys();
 	static void set_keys(const std::vector<std::vector<unsigned char> > &);
 private:
-	static std::vector<std::vector<unsigned char> > keys;
+	static std::vector<std::vector<unsigned char> > Keys;
 };
 // `keyexpand` will read in tablefile as well as expand the key
 // to get roundKeys
