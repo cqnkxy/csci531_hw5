@@ -23,6 +23,8 @@ private:
 	static std::vector<unsigned char> INVP;
 };
 
+// After perform the `check_tables` function, the `tables` class
+// will be filled for further usage 
 void check_tables(const std::string &);
 
 #endif

@@ -6,6 +6,7 @@
 #include "tablecheck.h"
 #include "crypt.h"
 #include "modprod.h"
+#include "keyexpand.h"
 
 using namespace std;
 
@@ -57,33 +58,23 @@ void parse_modprod(int argc, char *argv[])
 	cout << modprod(poly1, poly2) << endl;
 }
 
-void parse_encrypt(int argc, char *argv[])
+void parse_keyexpand(int argc, char *argv[])
 {
-	// if (argc != 4 && argc != 5) {
-	// 	malformed_command();
-	// }
-	// string key, tablefile;
-	// for (int i = 2; i <=3; i++) {
-	// 	string opt(argv[i]);
-	// 	if (opt.substr(0, 3) == "-t=") {
-	// 		tablefile = opt.substr(3, -1);
-	// 	} else if (opt.substr(0, 3) == "-k=") {
-	// 		key = opt.substr(3, -1);
-	// 	} else {
-	// 		malformed_command();
-	// 	}
-	// }
-	// if (argc == 4) {
-	// 	encrypt_decrypt(cin, key, tablefile);
-	// } else {
-	// 	ifstream in(argv[4]);
-	// 	if (!in.is_open()) {
-	// 		cerr << "File not exits" << endl;
-	// 		exit(1);
-	// 	}
-	// 	encrypt_decrypt(in, key, tablefile);
-	// 	in.close();
-	// }
+	if (argc != 4) {
+		malformed_command();
+	}
+	string key, tablefile;
+	for (int i = 2; i <= 3; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-k=") {
+			key = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-t=") {
+			tablefile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	keyexpand(key, tablefile);
 }
 
 void parse_cmd_run(int argc, char *argv[]) 
@@ -94,6 +85,8 @@ void parse_cmd_run(int argc, char *argv[])
 		parse_tablecheck(argc, argv);
 	} else if (strcmp(argv[1], "modprod") == 0){
 		parse_modprod(argc, argv);
+	} else if (strcmp(argv[1], "keyexpand") == 0) {
+		parse_keyexpand(argc, argv);
 	} else {
 		malformed_command();
 	}

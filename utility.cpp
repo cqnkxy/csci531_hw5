@@ -77,3 +77,26 @@ void modular_product(
 	res[1] = big_dot(a[1], b[3]) ^ big_dot(a[2], b[2]) ^ big_dot(a[3], b[1]) ^ big_dot(a[0], b[0]);
 	res[0] = big_dot(a[0], b[3]) ^ big_dot(a[1], b[2]) ^ big_dot(a[2], b[1]) ^ big_dot(a[3], b[0]);
 }
+
+void word_xor(
+	const vector<unsigned char> &self,
+	const vector<unsigned char> &other,
+	vector<unsigned char> &res
+){
+	assert(self.size() == 4 && other.size() == 4);
+	res.resize(4);
+	for (int i = 0; i < 4; ++i) {
+		res[i] = self[i] ^ other[i];
+	}
+}
+
+string vec_to_str(const vector<unsigned char> &vec)
+{
+	string res;
+	char buf[3];
+	for (size_t i = 0; i < vec.size(); ++i) {
+		sprintf(buf, "%02x", vec[i]);
+		res += buf;
+	}
+	return res;
+}

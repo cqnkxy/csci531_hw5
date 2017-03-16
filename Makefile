@@ -1,4 +1,4 @@
-OBJS = hw5.o tablecheck.o crypt.o utility.o modprod.o
+OBJS = hw5.o tablecheck.o crypt.o utility.o modprod.o keyexpand.o
 FLAGS = -g -W
 CXX = g++
 
@@ -9,6 +9,7 @@ tablecheck.o: tablecheck.h
 crypt.o: crypt.h
 utility.o: utility.h
 modprod.o: modprod.h
+keyexpand.o: keyexpand.h
 hw5.o: hw5.cpp
 
 clean:
