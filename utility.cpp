@@ -54,7 +54,9 @@ unsigned hex_to_dec(const string &hex)
 	unsigned res = 0;
 	for (size_t i = 0; i < hex.size(); i++) {
 		char ch = tolower(hex[i]);
-		assert('0' <= ch && ch <= 'f');
+		if (!('0' <= ch && ch <= 'f')){
+			fatal("%s Must be of all hex digits!\n", hex.c_str());
+		}
 		res = (res << 4) + ('0' <= ch && ch <= '9' ? ch - '0' : ch - 'a' + 10);
 	}
 	return res;
