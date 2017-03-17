@@ -7,6 +7,7 @@
 #include "crypt.h"
 #include "modprod.h"
 #include "keyexpand.h"
+#include "inverse.h"
 
 using namespace std;
 
@@ -133,6 +134,18 @@ void parse_decrypt(int argc, char *argv[])
 	}	
 }
 
+void parse_inverse(int argc, char *argv[])
+{
+	if (argc != 3) {
+		malformed_command();
+	}
+	string opt(argv[2]);
+	if (opt.substr(0, 3) != "-p=") {
+		malformed_command();
+	}
+	inverse(opt.substr(3, -1));
+}
+
 void parse_cmd_run(int argc, char *argv[]) 
 {
 	if (argc < 3) {
@@ -147,6 +160,8 @@ void parse_cmd_run(int argc, char *argv[])
 		parse_encrypt(argc, argv);
 	} else if (strcmp(argv[1], "decrypt") == 0) {
 		parse_decrypt(argc, argv);
+	} else if (strcmp(argv[1], "inverse") ==0 ) {
+		parse_inverse(argc, argv);
 	} else {
 		malformed_command();
 	}

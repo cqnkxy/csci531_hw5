@@ -1,5 +1,5 @@
 OBJS = hw5.o tablecheck.o crypt.o utility.o modprod.o keyexpand.o \
-	config.o
+	config.o inverse.o
 CXXFLAGS = -g -W
 CXX = g++
 
@@ -12,6 +12,7 @@ utility.o: utility.h
 modprod.o: modprod.h
 keyexpand.o: keyexpand.h
 config.o: config.h
+inverse.o: inverse.h
 hw5.o: hw5.cpp
 
 clean:

@@ -30,4 +30,5 @@ std::string vecs_to_str(
 	const std::vector<std::vector<unsigned char> >::iterator &end
 );
 void left_circular_shift(std::vector<unsigned char> &, int);
+unsigned char multiplicative_inverse(unsigned char);
 #endif
