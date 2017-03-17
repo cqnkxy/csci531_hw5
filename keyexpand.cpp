@@ -91,7 +91,7 @@ void keyexpand(
 	roundKeys::set_keys(keys);
 	if (output) {
 		for (int i = 0; i < (int)keys.size(); ++i) {
-			printf("w[%2d]%s\n", i, vec_to_str(keys[i]).c_str());
+			printf("w[%2d]: %s\n", i, vec_to_str(keys[i]).c_str());
 		}
 	}
 }

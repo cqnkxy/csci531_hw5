@@ -100,7 +100,7 @@ void encrypt(
 		fatal("The size of the input file is less than 16 bytes\n");
 	}
 	keyexpand(key, tablefile, false);
-	vector<vector<unsigned char> >::iterator k_itr = begin(roundKeys::keys());
+	vector<vector<unsigned char> >::iterator k_itr = roundKeys::keys().begin();
 	printf("round[%2d].input    %s\n", 0, vecs_to_str(state).c_str());
 	printf("round[%2d].k_sch    %s\n", 0, vecs_to_str(k_itr, k_itr+4).c_str());
 	addRoundKey(state, 0);
@@ -140,7 +140,7 @@ void decrypt(
 		fatal("The size of the input file is less than 16 bytes\n");
 	}
 	keyexpand(key, tablefile, false);
-	vector<vector<unsigned char> >::iterator k_itr = end(roundKeys::keys());
+	vector<vector<unsigned char> >::iterator k_itr = roundKeys::keys().end();
 	printf("round[%2d].iinput   %s\n", 0, vecs_to_str(state).c_str());
 	printf("round[%2d].ik_sch   %s\n", 0, vecs_to_str(k_itr-4, k_itr).c_str());
 	addRoundKey(state, Nr*Nb);
