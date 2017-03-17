@@ -105,6 +105,34 @@ void parse_encrypt(int argc, char *argv[])
 	}
 }
 
+void parse_decrypt(int argc, char *argv[])
+{
+	if (argc != 4 && argc != 5) {
+		malformed_command();
+	}
+	string key, tablefile;
+	for (int i = 2; i <= 3; ++i) {
+		string opt(argv[i]);
+		if (opt.substr(0, 3) == "-k=") {
+			key = opt.substr(3, -1);
+		} else if (opt.substr(0, 3) == "-t=") {
+			tablefile = opt.substr(3, -1);
+		} else {
+			malformed_command();
+		}
+	}
+	if (argc == 5) {
+		ifstream in(argv[4]);
+		if (!in.is_open()) {
+			fatal("%s can't be opened!", argv[4]);
+		}
+		decrypt(key, tablefile, in);
+		in.close();
+	} else {
+		decrypt(key, tablefile, cin);
+	}	
+}
+
 void parse_cmd_run(int argc, char *argv[]) 
 {
 	if (argc < 3) {
@@ -117,6 +145,8 @@ void parse_cmd_run(int argc, char *argv[])
 		parse_keyexpand(argc, argv);
 	} else if (strcmp(argv[1], "encrypt") == 0) {
 		parse_encrypt(argc, argv);
+	} else if (strcmp(argv[1], "decrypt") == 0) {
+		parse_decrypt(argc, argv);
 	} else {
 		malformed_command();
 	}

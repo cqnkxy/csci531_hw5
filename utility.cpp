@@ -7,9 +7,9 @@
 using namespace std;
 
 const bool DEBUG = true;
-static const int Nk = aes_128_config::Nk;
-static const int Nr = aes_128_config::Nr;
-static const int Nb = aes_128_config::Nb;
+static const int Nk = aes_bits_config::Nk;
+static const int Nr = aes_bits_config::Nr;
+static const int Nb = aes_bits_config::Nb;
 
 void fatal(const char *fmt, ...)
 {

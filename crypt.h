@@ -10,4 +10,10 @@ void encrypt(
 	std::istream &in
 );
 
+void decrypt(
+	const std::string &key,
+	const std::string &keyfile,
+	std::istream &in
+);
+
 #endif

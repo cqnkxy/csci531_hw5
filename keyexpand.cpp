@@ -8,9 +8,9 @@
 
 using namespace std;
 
-static const int Nk = aes_128_config::Nk;
-static const int Nr = aes_128_config::Nr;
-static const int Nb = aes_128_config::Nb;
+static const int Nk = aes_bits_config::Nk;
+static const int Nr = aes_bits_config::Nr;
+static const int Nb = aes_bits_config::Nb;
 
 vector<vector<unsigned char> >roundKeys::Keys;
 void roundKeys::set_keys(const vector<vector<unsigned char> > &vecs) {
@@ -49,7 +49,7 @@ inline void rcon(int i, vector<unsigned char> &res)
 		case 8: res[0] = 0x80; break;
 		case 9: res[0] = 0x1b; break;
 		case 10: res[0] = 0x36; break;
-		default: fatal("i must be in range [0, 10] for AES-128\n");
+		default: fatal("keyexpand.cpp rcon: i must be in range [0, 10] for AES-128\n");
 	}
 }
 
