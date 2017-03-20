@@ -65,22 +65,24 @@ void invShiftRows(vector<vector<unsigned char> > &state)
 void mixColumns(vector<vector<unsigned char> > &state)
 {
 	vector<vector<unsigned char> > _s = state;
+	const vector<unsigned char> &P = tables::p();
 	for (int c = 0; c < Nb; ++c) {
-		state[0][c] = big_dot(0x2, _s[0][c]) ^ big_dot(0x3, _s[1][c]) ^ _s[2][c] ^ _s[3][c];
-		state[1][c] = _s[0][c] ^ big_dot(0x2, _s[1][c]) ^ big_dot(0x3, _s[2][c]) ^ _s[3][c];
-		state[2][c] = _s[0][c] ^ _s[1][c] ^ big_dot(0x2, _s[2][c]) ^ big_dot(0x3, _s[3][c]);
-		state[3][c] = big_dot(0x3, _s[0][c]) ^ _s[1][c] ^ _s[2][c] ^ big_dot(0x2, _s[3][c]);
+		state[0][c] = big_dot(P[3], _s[0][c]) ^ big_dot(P[0], _s[1][c]) ^ big_dot(P[1], _s[2][c]) ^ big_dot(P[2], _s[3][c]);
+		state[1][c] = big_dot(P[2], _s[0][c]) ^ big_dot(P[3], _s[1][c]) ^ big_dot(P[0], _s[2][c]) ^ big_dot(P[1], _s[3][c]);
+		state[2][c] = big_dot(P[1], _s[0][c]) ^ big_dot(P[2], _s[1][c]) ^ big_dot(P[3], _s[2][c]) ^ big_dot(P[0], _s[3][c]);
+		state[3][c] = big_dot(P[0], _s[0][c]) ^ big_dot(P[1], _s[1][c]) ^ big_dot(P[2], _s[2][c]) ^ big_dot(P[3], _s[3][c]);
 	}
 }
 
 void invMixColumns(vector<vector<unsigned char> > &state)
 {
 	vector<vector<unsigned char> > _s = state;
+	const vector<unsigned char> &INVP = tables::invp();
 	for (int c = 0; c < Nb; ++c) {
-		state[0][c] = big_dot(0x0e, _s[0][c]) ^ big_dot(0x0b, _s[1][c]) ^ big_dot(0x0d, _s[2][c]) ^ big_dot(0x09, _s[3][c]);
-		state[1][c] = big_dot(0x09, _s[0][c]) ^ big_dot(0x0e, _s[1][c]) ^ big_dot(0x0b, _s[2][c]) ^ big_dot(0x0d, _s[3][c]);
-		state[2][c] = big_dot(0x0d, _s[0][c]) ^ big_dot(0x09, _s[1][c]) ^ big_dot(0x0e, _s[2][c]) ^ big_dot(0x0b, _s[3][c]);
-		state[3][c] = big_dot(0x0b, _s[0][c]) ^ big_dot(0x0d, _s[1][c]) ^ big_dot(0x09, _s[2][c]) ^ big_dot(0x0e, _s[3][c]);
+		state[0][c] = big_dot(INVP[3], _s[0][c]) ^ big_dot(INVP[0], _s[1][c]) ^ big_dot(INVP[1], _s[2][c]) ^ big_dot(INVP[2], _s[3][c]);
+		state[1][c] = big_dot(INVP[2], _s[0][c]) ^ big_dot(INVP[3], _s[1][c]) ^ big_dot(INVP[0], _s[2][c]) ^ big_dot(INVP[1], _s[3][c]);
+		state[2][c] = big_dot(INVP[1], _s[0][c]) ^ big_dot(INVP[2], _s[1][c]) ^ big_dot(INVP[3], _s[2][c]) ^ big_dot(INVP[0], _s[3][c]);
+		state[3][c] = big_dot(INVP[0], _s[0][c]) ^ big_dot(INVP[1], _s[1][c]) ^ big_dot(INVP[2], _s[2][c]) ^ big_dot(INVP[3], _s[3][c]);
 	}
 }
 
@@ -116,10 +118,13 @@ void encrypt(
 		addRoundKey(state, round*Nb);
 		printf("round[%2d].k_sch    %s\n", round, vecs_to_str(k_itr, k_itr+4).c_str());
 	}
+	printf("round[%2d].start    %s\n", Nr, vecs_to_str(state).c_str());
 	subBytes(state);
 	printf("round[%2d].s_box    %s\n", Nr, vecs_to_str(state).c_str());
 	shiftRows(state);
-	printf("round[%2d].s_box    %s\n", Nr, vecs_to_str(state).c_str());
+	printf("round[%2d].s_row    %s\n", Nr, vecs_to_str(state).c_str());
+	advance(k_itr, 4);
+	printf("round[%2d].k_sch    %s\n", Nr, vecs_to_str(k_itr, k_itr+4).c_str());
 	addRoundKey(state, Nr*Nb);
 	printf("round[%2d].output   %s\n", Nr, vecs_to_str(state).c_str());
 }
@@ -152,14 +157,18 @@ void decrypt(
 		invSubBytes(state);
 		printf("round[%2d].is_box   %s\n", round, vecs_to_str(state).c_str());
 		addRoundKey(state, (Nr-round)*Nb);
-		printf("round[%2d].ik_sch   %s\n", round, vecs_to_str(k_itr, k_itr+4).c_str());
+		printf("round[%2d].ik_sch   %s\n", round, vecs_to_str(k_itr-4, k_itr).c_str());
+		printf("round[%2d].ik_add   %s\n", round, vecs_to_str(state).c_str());
 		invMixColumns(state);
-		printf("round[%2d].im_col   %s\n", round, vecs_to_str(state).c_str());
+		// printf("round[%2d].im_col   %s\n", round, vecs_to_str(state).c_str());
 	}
+	printf("round[%2d].istart   %s\n", Nr, vecs_to_str(state).c_str());
 	invShiftRows(state);
-	printf("round[%2d].is_box   %s\n", Nr, vecs_to_str(state).c_str());
+	printf("round[%2d].is_row   %s\n", Nr, vecs_to_str(state).c_str());
 	invSubBytes(state);
 	printf("round[%2d].is_box   %s\n", Nr, vecs_to_str(state).c_str());
+	advance(k_itr, -4);
+	printf("round[%2d].ik_sch   %s\n", Nr, vecs_to_str(k_itr-4, k_itr).c_str());
 	addRoundKey(state, 0);
 	printf("round[%2d].ioutput  %s\n", Nr, vecs_to_str(state).c_str());
 }
