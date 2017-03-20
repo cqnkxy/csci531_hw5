@@ -7,6 +7,7 @@
 
 void fatal(const char *fmt, ...);
 void dprint(const char *fmt, ...);
+bool all_hex(const std::string &);
 unsigned hex_to_dec(const std::string &hex);
 unsigned char big_dot(unsigned char, unsigned char);
 void modular_product(

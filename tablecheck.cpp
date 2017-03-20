@@ -34,10 +34,13 @@ void check_s(const string &value)
 	if (value.size() != 512) {
 		fatal("value of S should be of size 512\n");
 	}
+	if (!all_hex(value)) {
+		fatal("value of S should be hex digits [0-9a-zA-Z]\n");
+	}
 	for (size_t i = 0; i < value.size(); i += 2){
 		unsigned char val = hex_to_dec(value.substr(i, 2));
 		if (exits[val]) {
-			fatal("%02x occur too many times\n", val);
+			fatal("%02x occur too many times in S\n", val);
 		}
 		vec.push_back(val);
 		exits[val] = 1;
@@ -48,6 +51,9 @@ void check_s(const string &value)
 
 void check_p(const string &value)
 {
+	if (!all_hex(value)) {
+		fatal("value of P should be hex digits [0-9a-zA-Z]\n");
+	}
 	vector<unsigned char> vec;
 	for (size_t i = 0; i < value.size(); i += 2) {
 		unsigned char val = hex_to_dec(value.substr(i, 2));
@@ -58,6 +64,9 @@ void check_p(const string &value)
 
 void check_invp(const string &value)
 {
+	if (!all_hex(value)) {
+		fatal("value of INVP should be hex digits [0-9a-zA-Z]\n");
+	}
 	vector<unsigned char> vec;
 	for (size_t i = 0; i < value.size(); i += 2) {
 		unsigned char val = hex_to_dec(value.substr(i, 2));

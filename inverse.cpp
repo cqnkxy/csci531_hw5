@@ -128,6 +128,9 @@ void inverse(const string &poly)
 	if (poly.size() != 8) {
 		fatal("Invalid poly length!\n");
 	}
+	if (!all_hex(poly)) {
+		fatal("value of poly should be hex digits [0-9a-zA-Z]\n");
+	}
 	vector<unsigned char> p;
 	for (size_t i = 0; i < poly.size(); i += 2){
 		p.push_back(hex_to_dec(poly.substr(i, 2)));
