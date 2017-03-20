@@ -71,6 +71,8 @@ static void pack_zero_front(vector<unsigned char> &vec, size_t sz)
 	vec = tmp;
 }
 
+// filter out the leading zeros in `in` vector.
+// `in` and `out` can't be the same vector.
 static void filter_zero(
 	const vector<unsigned char> &in,
 	vector<unsigned char> &out
@@ -83,7 +85,8 @@ static void filter_zero(
 	}
 }
 
-// quotient/remainder can't point to divident/divisor
+// the vector of quotient/remainder can't be the same
+// as the vector of divident/divisor
 static void long_hand_division(
 	const vector<unsigned char> &divident,
 	const vector<unsigned char> &divisor,
