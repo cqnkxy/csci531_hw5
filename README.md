@@ -1,6 +1,6 @@
 # USC CSCI531 HW5
 
-An assignment about AES-128 and arithematics in GF(<sup>2</sup>).
+An assignment about AES-128 and arithematics in GF(2<sup>8</sup>).
 
 ## Compile
 
